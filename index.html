@@ -26,18 +26,18 @@
             <p class="header-subtitle">ЖИЛОЙ КОМПЛЕКС</p>
         </div>
         <nav>
-            <a href="#">О комплексе</a>
-            <a href="#">Район</a>
-            <a href="#">Каталог квартир</a>
-            <a href="#">Ипотека</a>
-            <a href="#">Контакты</a>
+            <a href="#features">О комплексе</a>
+            <a href="#map-section">Район</a>
+            <a href="#apartments">Каталог квартир</a>
+            <a href="#questions">Ипотека</a>
+            <a href="#footer">Контакты</a>
         </nav>
     </header>
     <section class="hero">
         <h2>Жилой комплекс<br>в историческом центре</h2>
         <img src="img/mouse.svg" alt="mouse" class="mouse-icon">
     </section>
-    <section class="features">
+    <section class="features" id="features">
         <div class="features-center">
             <div class="feature-card">
                 <img src="img/bench (1).svg" alt="bench">
@@ -60,26 +60,185 @@
             <img src="img/II.png" alt="">
         </div>
     </section>
-    <section class="apartments">
+    <section class="apartments" id="apartments">
         <h3 class="apartments-title">Наши квартиры</h3>
         <div class="apartments-grid">
-            <div class="apt-card apt-card-1">
+            <div class="apt-card apt-card-1" data-index="0">
                 <div class="apt-bg-wrapper">
                     <img src="img/III.png" alt="" class="apt-bg">
                     <img src="img/01.png" alt="квартира 1" class="apt-img">
                 </div>
             </div>
-            <div class="apt-card">
+            <div class="apt-card" data-index="1">
                 <img src="img/02 (1).png" alt="квартира 2">
             </div>
-            <div class="apt-card">
+            <div class="apt-card" data-index="2">
                 <img src="img/03.png" alt="квартира 3">
             </div>
-            <div class="apt-card">
+            <div class="apt-card" data-index="3">
                 <img src="img/04.png" alt="квартира 4">
             </div>
         </div>
     </section>
+    <div class="modal-overlay" id="galleryModal">
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">&times;</button>
+            <button class="modal-nav modal-prev" id="modalPrev">&#10094;</button>
+            <button class="modal-nav modal-next" id="modalNext">&#10095;</button>
+            <div class="modal-image-wrapper">
+                <img src="" alt="" class="modal-image" id="modalImage">
+            </div>
+            <div class="modal-counter" id="modalCounter"></div>
+        </div>
+    </div>
+    <script>
+        const apartments = [
+            { src: 'img/01.png', alt: 'квартира 1' },
+            { src: 'img/02 (1).png', alt: 'квартира 2' },
+            { src: 'img/03.png', alt: 'квартира 3' },
+            { src: 'img/04.png', alt: 'квартира 4' }
+        ];
+
+        let currentIndex = 0;
+        let isAnimating = false;
+
+        const modal = document.getElementById('galleryModal');
+        const modalImage = document.getElementById('modalImage');
+        const modalClose = document.getElementById('modalClose');
+        const modalPrev = document.getElementById('modalPrev');
+        const modalNext = document.getElementById('modalNext');
+        const modalCounter = document.getElementById('modalCounter');
+
+        function openModal(index) {
+            currentIndex = index;
+            modalImage.src = apartments[index].src;
+            modalImage.alt = apartments[index].alt;
+            updateCounter();
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function updateCounter() {
+            modalCounter.textContent = (currentIndex + 1) + ' / ' + apartments.length;
+        }
+
+        function showImage(direction) {
+            if (isAnimating) return;
+            isAnimating = true;
+
+            if (direction === 'next') {
+                currentIndex = (currentIndex + 1) % apartments.length;
+            } else {
+                currentIndex = (currentIndex - 1 + apartments.length) % apartments.length;
+            }
+
+            modalImage.classList.add(direction === 'next' ? 'slide-left' : 'slide-right');
+
+            setTimeout(() => {
+                modalImage.src = apartments[currentIndex].src;
+                modalImage.alt = apartments[currentIndex].alt;
+                updateCounter();
+                modalImage.classList.remove('slide-left', 'slide-right');
+                modalImage.classList.add(direction === 'next' ? 'slide-in-right' : 'slide-in-left');
+
+                setTimeout(() => {
+                    modalImage.classList.remove('slide-in-right', 'slide-in-left');
+                    isAnimating = false;
+                }, 400);
+            }, 300);
+        }
+
+        document.querySelectorAll('.apt-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const index = parseInt(card.dataset.index);
+                openModal(index);
+            });
+        });
+
+        modalClose.addEventListener('click', closeModal);
+        modalPrev.addEventListener('click', () => showImage('prev'));
+        modalNext.addEventListener('click', () => showImage('next'));
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (!modal.classList.contains('active')) return;
+            if (e.key === 'Escape') closeModal();
+            if (e.key === 'ArrowLeft') showImage('prev');
+            if (e.key === 'ArrowRight') showImage('next');
+        });
+
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        modal.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        modal.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            const diff = touchStartX - touchEndX;
+            if (Math.abs(diff) > 50) {
+                showImage(diff > 0 ? 'next' : 'prev');
+            }
+        });
+    </script>
+    <script>
+        const videoPoster = document.getElementById('videoPoster');
+        const videoPlayBtn = document.getElementById('videoPlayBtn');
+        const videoModalOverlay = document.getElementById('videoModalOverlay');
+        const videoModalVideo = document.getElementById('videoModalVideo');
+        const videoModalClose = document.getElementById('videoModalClose');
+
+        function openVideoModal() {
+            videoModalOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            videoModalVideo.currentTime = 0;
+            videoModalVideo.play().catch(function(err) {
+                console.log('Video play error:', err);
+            });
+        }
+
+        function closeVideoModal() {
+            videoModalOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+            videoModalVideo.pause();
+            videoModalVideo.currentTime = 0;
+        }
+
+        videoPoster.addEventListener('click', function(e) {
+            e.stopPropagation();
+            openVideoModal();
+        });
+
+        videoPlayBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            openVideoModal();
+        });
+
+        videoModalClose.addEventListener('click', function() {
+            closeVideoModal();
+        });
+
+        videoModalOverlay.addEventListener('click', function(e) {
+            if (e.target === videoModalOverlay) {
+                closeVideoModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && videoModalOverlay.classList.contains('active')) {
+                closeVideoModal();
+            }
+        });
+    </script>
     <section class="cta-section">
         <img src="img/Rectangle (5).jpg" alt="" class="cta-rectangle">
         <div class="cta-left">
@@ -103,13 +262,29 @@
         <img src="img/video.jpg" alt="" class="cta-video">
     </section>
     <section class="video-section">
-        <img src="img/video.jpg" alt="" class="video-thumb">
+        <div class="video-wrapper">
+            <img src="img/video.jpg" alt="" class="video-poster" id="videoPoster">
+            <div class="video-play-btn" id="videoPlayBtn">
+                <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="30" cy="30" r="30" fill="rgba(212,193,127,0.8)"/>
+                    <path d="M24 18L44 30L24 42V18Z" fill="white"/>
+                </svg>
+            </div>
+        </div>
     </section>
-    <section class="map-section">
+    <div class="video-modal-overlay" id="videoModalOverlay">
+        <div class="video-modal-content">
+            <button class="video-modal-close" id="videoModalClose">&times;</button>
+            <video class="video-modal-video" id="videoModalVideo" controls playsinline>
+                <source src="img/video1.mp4" type="video/mp4">
+            </video>
+        </div>
+    </div>
+    <section class="map-section" id="map-section">
         <h4 class="map-title">Район на карте</h4>
         <img src="img/map.png" alt="" class="map-img">
     </section>
-    <section class="questions-section">
+    <section class="questions-section" id="questions">
         <h4 class="questions-title">Есть вопросы?</h4>
         <div class="questions-form">
             <div class="q-form-row">
@@ -124,7 +299,7 @@
             </div>
         </div>
     </section>
-    <footer class="footer">
+    <footer class="footer" id="footer">
         <div class="footer-top">
             <div class="footer-brand">
                 <h2 class="footer-logo">LoftHouse</h2>
