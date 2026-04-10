@@ -190,55 +190,6 @@
             }
         });
     </script>
-    <script>
-        const videoPoster = document.getElementById('videoPoster');
-        const videoPlayBtn = document.getElementById('videoPlayBtn');
-        const videoModalOverlay = document.getElementById('videoModalOverlay');
-        const videoModalVideo = document.getElementById('videoModalVideo');
-        const videoModalClose = document.getElementById('videoModalClose');
-
-        function openVideoModal() {
-            videoModalOverlay.classList.add('active');
-            document.body.style.overflow = 'hidden';
-            videoModalVideo.currentTime = 0;
-            videoModalVideo.play().catch(function(err) {
-                console.log('Video play error:', err);
-            });
-        }
-
-        function closeVideoModal() {
-            videoModalOverlay.classList.remove('active');
-            document.body.style.overflow = '';
-            videoModalVideo.pause();
-            videoModalVideo.currentTime = 0;
-        }
-
-        videoPoster.addEventListener('click', function(e) {
-            e.stopPropagation();
-            openVideoModal();
-        });
-
-        videoPlayBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            openVideoModal();
-        });
-
-        videoModalClose.addEventListener('click', function() {
-            closeVideoModal();
-        });
-
-        videoModalOverlay.addEventListener('click', function(e) {
-            if (e.target === videoModalOverlay) {
-                closeVideoModal();
-            }
-        });
-
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && videoModalOverlay.classList.contains('active')) {
-                closeVideoModal();
-            }
-        });
-    </script>
     <section class="cta-section">
         <img src="img/Rectangle (5).jpg" alt="" class="cta-rectangle">
         <div class="cta-left">
@@ -276,7 +227,7 @@
         <div class="video-modal-content">
             <button class="video-modal-close" id="videoModalClose">&times;</button>
             <video class="video-modal-video" id="videoModalVideo" controls playsinline>
-                <source src="img/video1.mp4" type="video/mp4">
+                <source src="img/videohome.mp4" type="video/mp4">
             </video>
         </div>
     </div>
@@ -355,5 +306,64 @@
             </div>
         </div>
     </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var videoPoster = document.getElementById('videoPoster');
+            var videoPlayBtn = document.getElementById('videoPlayBtn');
+            var videoModalOverlay = document.getElementById('videoModalOverlay');
+            var videoModalVideo = document.getElementById('videoModalVideo');
+            var videoModalClose = document.getElementById('videoModalClose');
+
+            function openVideoModal() {
+                videoModalOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                videoModalVideo.currentTime = 0;
+                videoModalVideo.play().catch(function(err) {
+                    console.log('Video play error:', err);
+                });
+            }
+
+            function closeVideoModal() {
+                videoModalOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+                videoModalVideo.pause();
+                videoModalVideo.currentTime = 0;
+            }
+
+            if (videoPoster) {
+                videoPoster.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    openVideoModal();
+                });
+            }
+
+            if (videoPlayBtn) {
+                videoPlayBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    openVideoModal();
+                });
+            }
+
+            if (videoModalClose) {
+                videoModalClose.addEventListener('click', function() {
+                    closeVideoModal();
+                });
+            }
+
+            if (videoModalOverlay) {
+                videoModalOverlay.addEventListener('click', function(e) {
+                    if (e.target === videoModalOverlay) {
+                        closeVideoModal();
+                    }
+                });
+            }
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && videoModalOverlay.classList.contains('active')) {
+                    closeVideoModal();
+                }
+            });
+        });
+    </script>
 </body>
 </html>
